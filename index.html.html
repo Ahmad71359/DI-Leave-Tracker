@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DI Leave Tracker 2026</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f6f6f4;--bg3:#ededeb;
+  --text:#181816;--text2:#65655f;--text3:#9e9e98;
+  --border:rgba(0,0,0,0.1);--border2:rgba(0,0,0,0.18);
+  --blue:#2f7de0;--blue-l:#e8f2fd;--blue-d:#1657a8;
+  --teal:#18976c;--teal-l:#e0f5ec;--teal-d:#0d6047;
+  --purple:#4e46b4;--purple-l:#eeedfd;
+  --amber:#c27a14;--amber-l:#fdf3e0;
+  --r:8px;--rl:12px;--rxl:16px;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#1a1a18;--bg2:#232321;--bg3:#2b2b29;
+    --text:#f0f0ec;--text2:#a0a09a;--text3:#686862;
+    --border:rgba(255,255,255,0.09);--border2:rgba(255,255,255,0.16);
+    --blue-l:#0d1f3a;--teal-l:#051f17;--purple-l:#17154a;--amber-l:#2a1f06;
+  }
+}
+body{font-family:var(--font);background:var(--bg2);color:var(--text);font-size:14px;line-height:1.5;min-height:100vh}
+
+/* HEADER */
+.hdr{background:var(--bg);border-bottom:0.5px solid var(--border);padding:0 1.75rem;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.hdr-l{display:flex;align-items:center;gap:10px}
+.hdr-icon{width:32px;height:32px;border-radius:var(--r);background:var(--blue-l);display:flex;align-items:center;justify-content:center;color:var(--blue-d);font-size:16px}
+.hdr h1{font-size:14px;font-weight:500;color:var(--text)}
+.hdr p{font-size:11px;color:var(--text3)}
+.hdr-badge{font-size:11px;padding:3px 9px;border-radius:20px;background:var(--teal-l);color:var(--teal-d);font-weight:500;display:flex;align-items:center;gap:4px}
+
+/* TABS */
+.tabs-bar{background:var(--bg);border-bottom:0.5px solid var(--border);padding:0 1.75rem;display:flex;gap:0;position:sticky;top:54px;z-index:99}
+.tab-btn{font-size:13px;padding:12px 18px;border:none;background:none;color:var(--text2);cursor:pointer;font-family:var(--font);display:flex;align-items:center;gap:6px;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;white-space:nowrap}
+.tab-btn i{font-size:15px}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:500}
+
+/* FILTER BAR */
+.filter-bar{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.75rem;flex-wrap:wrap;gap:8px}
+.filter-bar-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em}
+.pills{display:flex;gap:6px}
+.pill{font-size:12px;padding:5px 13px;border-radius:20px;border:0.5px solid var(--border2);background:var(--bg);color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s;font-family:var(--font)}
+.pill:hover{background:var(--bg2)}
+.pill.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+/* PAGE CONTENT */
+.page{max-width:1080px;margin:0 auto;padding:1.25rem 1.75rem 3rem}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* METRICS */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:1.25rem}
+.mc{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--r);padding:.85rem 1rem}
+.mc-label{font-size:11px;color:var(--text3);margin-bottom:5px;display:flex;align-items:center;gap:5px;text-transform:uppercase;letter-spacing:.04em}
+.mc-label i{font-size:13px}
+.mc-val{font-size:24px;font-weight:500;color:var(--text);line-height:1}
+.mc-sub{font-size:11px;color:var(--text3);margin-top:3px}
+
+/* CARDS */
+.card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--rl);padding:1.1rem 1.25rem}
+.card-title{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.85rem;display:flex;align-items:center;gap:6px}
+.card-title i{font-size:14px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+@media(max-width:680px){.g2{grid-template-columns:1fr}}
+
+/* LEGEND */
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.leg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)}
+.leg-sq{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+
+/* HEATMAP */
+.hm-month-row{display:flex;margin-left:138px;gap:3px;margin-bottom:4px}
+.hm-mlbl{flex:1;font-size:10px;color:var(--text3);text-align:center;min-width:0}
+.hm-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.hm-person{width:130px;flex-shrink:0;display:flex;align-items:center;gap:7px}
+.avatar{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;flex-shrink:0}
+.pname{font-size:11px;line-height:1.3}
+.ploc{font-size:10px;color:var(--text3)}
+.hm-cells{display:flex;gap:3px;flex:1}
+.hm-cell{flex:1;height:28px;border-radius:4px;font-size:9px;font-weight:600;display:flex;align-items:center;justify-content:center;cursor:default;min-width:0;transition:transform .1s,opacity .1s}
+.hm-cell:hover{transform:scale(1.2);z-index:2;opacity:.8}
+
+/* TOOLTIP */
+.tip{position:fixed;background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--r);padding:8px 12px;font-size:12px;pointer-events:none;z-index:999;display:none;max-width:220px;line-height:1.65}
+.tip strong{font-weight:500;display:block;border-bottom:0.5px solid var(--border);padding-bottom:4px;margin-bottom:5px}
+.tip-row{display:flex;justify-content:space-between;gap:14px}
+.tip-row span:first-child{color:var(--text2)}
+.tip-row span:last-child{font-weight:500}
+
+/* MINI CALENDAR */
+.cal-wrap{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.cal-left{flex:0 0 260px}
+.cal-right{flex:1;min-width:200px}
+.month-sel-row{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.month-sel-row select{font-size:13px;padding:5px 10px;border-radius:var(--r);border:0.5px solid var(--border2);background:var(--bg);color:var(--text);font-family:var(--font);cursor:pointer}
+.mini-cal{width:100%;border-collapse:collapse}
+.mini-cal th{font-size:10px;color:var(--text3);text-align:center;padding:3px 2px;font-weight:500}
+.mini-cal td{text-align:center;padding:2px}
+.cday{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;font-size:12px;cursor:default}
+.cday.we{color:var(--text3)}
+.cday.bh-ke{background:var(--teal);color:#fff;font-weight:500}
+.cday.bh-uk{background:var(--blue-d);color:#fff;font-weight:500}
+.cday.bh-both{background:var(--purple);color:#fff;font-weight:500}
+.cday.lv{background:var(--blue);color:#fff;font-weight:500}
+.cday.tod{box-shadow:0 0 0 2px var(--blue)}
+
+/* BH LIST */
+.bh-item{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:0.5px solid var(--border);gap:8px}
+.bh-item:last-child{border-bottom:none}
+.bh-date{font-size:12px;color:var(--text2);min-width:95px;flex-shrink:0}
+.bh-name{font-size:12px;font-weight:500;color:var(--text);flex:1}
+.days-away{font-size:10px;color:var(--text3);margin-left:4px}
+.badge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500;white-space:nowrap}
+.b-ke{background:var(--teal-l);color:var(--teal-d)}
+.b-uk{background:var(--blue-l);color:var(--blue-d)}
+.b-both{background:var(--purple-l);color:var(--purple)}
+
+/* AVAIL BARS */
+.avail-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.avail-lbl{width:90px;flex-shrink:0;font-size:12px;color:var(--text2)}
+.avail-track{flex:1;height:7px;background:var(--bg2);border-radius:4px;overflow:hidden}
+.avail-fill{height:100%;border-radius:4px;transition:width .5s ease}
+.avail-val{width:38px;text-align:right;font-size:12px;font-weight:500}
+
+/* ASK AI */
+.ai-wrap{display:flex;flex-direction:column;height:calc(100vh - 160px);min-height:480px;gap:0}
+.ai-context{background:var(--blue-l);border:0.5px solid rgba(47,125,224,.2);border-radius:var(--r);padding:.75rem 1rem;font-size:12px;color:var(--blue-d);margin-bottom:1rem;display:flex;align-items:flex-start;gap:8px;flex-shrink:0}
+.ai-context i{font-size:16px;flex-shrink:0;margin-top:1px}
+.ai-msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding:4px 2px;margin-bottom:1rem;scroll-behavior:smooth}
+.msg{display:flex;gap:10px;align-items:flex-start;max-width:88%}
+.msg.user{align-self:flex-end;flex-direction:row-reverse}
+.msg-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0}
+.msg-avatar.ai-av{background:var(--blue-l);color:var(--blue-d)}
+.msg-avatar.user-av{background:var(--bg3);color:var(--text2)}
+.msg-bubble{padding:9px 13px;border-radius:var(--rl);font-size:13px;line-height:1.6;max-width:100%}
+.msg.ai .msg-bubble{background:var(--bg);border:0.5px solid var(--border)}
+.msg.user .msg-bubble{background:var(--blue);color:#fff}
+.msg-bubble p{margin:0 0 6px}
+.msg-bubble p:last-child{margin-bottom:0}
+.msg-bubble ul{margin:4px 0 4px 16px}
+.typing{display:flex;align-items:center;gap:4px;padding:10px 14px}
+.dot{width:6px;height:6px;background:var(--text3);border-radius:50%;animation:blink 1.2s infinite}
+.dot:nth-child(2){animation-delay:.2s}
+.dot:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.2}40%{opacity:1}}
+.ai-input-row{display:flex;gap:8px;flex-shrink:0}
+.ai-input{flex:1;font-size:13px;padding:9px 14px;border-radius:var(--rl);border:0.5px solid var(--border2);background:var(--bg);color:var(--text);font-family:var(--font);outline:none;transition:border-color .15s}
+.ai-input:focus{border-color:var(--blue)}
+.ai-send{width:38px;height:38px;border-radius:var(--r);background:var(--blue);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:background .15s;flex-shrink:0}
+.ai-send:hover{background:var(--blue-d)}
+.ai-send:disabled{background:var(--bg3);color:var(--text3);cursor:default}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;flex-shrink:0}
+.chip{font-size:12px;padding:5px 12px;border-radius:20px;border:0.5px solid var(--border2);background:var(--bg);color:var(--text2);cursor:pointer;transition:all .15s;font-family:var(--font)}
+.chip:hover{background:var(--blue-l);border-color:var(--blue);color:var(--blue-d)}
+
+.empty{text-align:center;padding:2rem;color:var(--text3);font-size:13px}
+.empty i{font-size:28px;display:block;margin-bottom:6px}
+
+.section-gap{margin-bottom:12px}
+.divider{height:0.5px;background:var(--border);margin:1rem 0}
+</style>
+</head>
+<body>
+<div class="tip" id="tt"></div>
+
+<header class="hdr">
+  <div class="hdr-l">
+    <div class="hdr-icon"><i class="ti ti-calendar-week" aria-hidden="true"></i></div>
+    <div>
+      <h1>DI Leave Tracker 2026</h1>
+      <p>Kenya &amp; UK · 4 team members</p>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <span class="hdr-badge"><i class="ti ti-table-import" aria-hidden="true" style="font-size:11px"></i> From Excel</span>
+    <span style="font-size:11px;color:var(--text3)" id="genDate"></span>
+  </div>
+</header>
+
+<nav class="tabs-bar" role="tablist" aria-label="Dashboard sections">
+  <button class="tab-btn active" id="tb-overview"  onclick="switchTab('overview')"  role="tab" aria-selected="true"  aria-controls="panel-overview"><i class="ti ti-layout-dashboard" aria-hidden="true"></i> Overview</button>
+  <button class="tab-btn"        id="tb-heatmap"   onclick="switchTab('heatmap')"   role="tab" aria-selected="false" aria-controls="panel-heatmap"><i class="ti ti-layout-grid" aria-hidden="true"></i> Heatmap</button>
+  <button class="tab-btn"        id="tb-calendar"  onclick="switchTab('calendar')"  role="tab" aria-selected="false" aria-controls="panel-calendar"><i class="ti ti-calendar-month" aria-hidden="true"></i> Calendar</button>
+  <button class="tab-btn"        id="tb-holidays"  onclick="switchTab('holidays')"  role="tab" aria-selected="false" aria-controls="panel-holidays"><i class="ti ti-building-bank" aria-hidden="true"></i> Holidays</button>
+  <button class="tab-btn"        id="tb-askai"     onclick="switchTab('askai')"     role="tab" aria-selected="false" aria-controls="panel-askai"><i class="ti ti-message-circle-2" aria-hidden="true"></i> Ask AI</button>
+</nav>
+
+<div class="filter-bar" id="filterBar">
+  <span class="filter-bar-label">Filter by location</span>
+  <div class="pills">
+    <button class="pill active" id="f-all" onclick="setFilter('all')"><i class="ti ti-users" aria-hidden="true" style="font-size:12px"></i> All</button>
+    <button class="pill" id="f-ke" onclick="setFilter('ke')"><i class="ti ti-map-pin" aria-hidden="true" style="font-size:12px"></i> Kenya</button>
+    <button class="pill" id="f-uk" onclick="setFilter('uk')"><i class="ti ti-map-pin" aria-hidden="true" style="font-size:12px"></i> UK</button>
+  </div>
+</div>
+
+<main class="page">
+
+  <!-- ── OVERVIEW ── -->
+  <div class="tab-panel active" id="panel-overview" role="tabpanel" aria-labelledby="tb-overview">
+    <div class="metrics" id="metrics"></div>
+    <div class="g2">
+      <div class="card">
+        <div class="card-title"><i class="ti ti-chart-bar" aria-hidden="true"></i> Leave taken by person</div>
+        <div class="legend">
+          <span class="leg"><span class="leg-sq" style="background:var(--blue)"></span>Leave days</span>
+          <span class="leg"><span class="leg-sq" style="background:var(--bg2);border:0.5px solid var(--border2)"></span>Remaining working days</span>
+        </div>
+        <div style="position:relative;height:175px"><canvas id="leaveChart" role="img" aria-label="Stacked bar showing leave vs remaining working days per person">Millicent Oketch: 2 leave days taken.</canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><i class="ti ti-chart-line" aria-hidden="true"></i> Bank holidays per month</div>
+        <div class="legend">
+          <span class="leg"><span class="leg-sq" style="background:var(--teal)"></span>Kenya</span>
+          <span class="leg" style="align-items:center">
+            <svg width="18" height="10" aria-hidden="true" style="flex-shrink:0"><line x1="0" y1="5" x2="18" y2="5" stroke="#1657a8" stroke-width="2" stroke-dasharray="4,2"/></svg>
+            UK
+          </span>
+        </div>
+        <div style="position:relative;height:175px"><canvas id="bhChart" role="img" aria-label="Line chart of bank holidays per month for Kenya and UK">Kenya peaks April–June, UK peaks April–May.</canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── HEATMAP ── -->
+  <div class="tab-panel" id="panel-heatmap" role="tabpanel" aria-labelledby="tb-heatmap">
+    <div class="card">
+      <div class="card-title"><i class="ti ti-layout-grid" aria-hidden="true"></i> Annual snapshot — hover any cell for details</div>
+      <div class="legend" style="margin-bottom:16px">
+        <span class="leg"><span class="leg-sq" style="background:#2f7de0"></span>Leave taken</span>
+        <span class="leg"><span class="leg-sq" style="background:#18976c"></span>Kenya holiday</span>
+        <span class="leg"><span class="leg-sq" style="background:#d97706"></span>UK holiday</span>
+        <span class="leg"><span class="leg-sq" style="background:#7c3aed"></span>Both holiday</span>
+        <span class="leg"><span class="leg-sq" style="background:var(--bg2);border:0.5px solid var(--border)"></span>No events · number = available days</span>
+      </div>
+      <div class="hm-month-row" id="hmLabels"></div>
+      <div id="heatmap"></div>
+    </div>
+  </div>
+
+  <!-- ── CALENDAR ── -->
+  <div class="tab-panel" id="panel-calendar" role="tabpanel" aria-labelledby="tb-calendar">
+    <div class="card">
+      <div class="cal-wrap">
+        <div class="cal-left">
+          <div class="month-sel-row">
+            <label for="monthSel" style="font-size:12px;color:var(--text2)">Month</label>
+            <select id="monthSel" onchange="renderMonthCal()">
+              <option value="0">January</option><option value="1">February</option>
+              <option value="2">March</option><option value="3">April</option>
+              <option value="4">May</option><option value="5">June</option>
+              <option value="6">July</option><option value="7">August</option>
+              <option value="8">September</option><option value="9">October</option>
+              <option value="10">November</option><option value="11">December</option>
+            </select>
+          </div>
+          <div id="miniCal"></div>
+        </div>
+        <div class="cal-right">
+          <div class="card-title" style="margin-bottom:.6rem"><i class="ti ti-info-circle" aria-hidden="true"></i> This month</div>
+          <div id="calDetail"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── HOLIDAYS ── -->
+  <div class="tab-panel" id="panel-holidays" role="tabpanel" aria-labelledby="tb-holidays">
+    <div class="g2">
+      <div class="card">
+        <div class="card-title"><i class="ti ti-building-bank" aria-hidden="true"></i> Upcoming bank holidays <span id="bhCount" style="font-weight:400;color:var(--text3);margin-left:4px"></span></div>
+        <div id="upcomingBH"></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><i class="ti ti-chart-dots" aria-hidden="true"></i> Full-year working day availability</div>
+        <div id="availBars" style="margin-top:4px"></div>
+        <div class="divider"></div>
+        <div class="card-title" style="margin-bottom:.5rem"><i class="ti ti-info-circle" aria-hidden="true"></i> How it's calculated</div>
+        <p style="font-size:11px;color:var(--text3);line-height:1.6">Total Mon–Fri working days in 2026, minus public holidays for each person's location, minus recorded leave days.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ASK AI ── -->
+  <div class="tab-panel" id="panel-askai" role="tabpanel" aria-labelledby="tb-askai">
+    <div class="ai-wrap">
+      <div class="ai-context" role="note">
+        <i class="ti ti-table" aria-hidden="true"></i>
+        <span>Ask anything about the tracker — leave days, bank holidays, working day availability, or team capacity. <strong>Note:</strong> AI responses work when this file is open inside Claude.ai.</span>
+      </div>
+      <div class="chips" id="chips"></div>
+      <div class="ai-msgs" id="aiMsgs" role="log" aria-live="polite" aria-label="Conversation"></div>
+      <div class="ai-input-row">
+        <input class="ai-input" id="aiInput" type="text" placeholder="Ask anything about the tracker…" aria-label="Ask a question about the leave tracker" onkeydown="if(event.key==='Enter')sendAI()">
+        <button class="ai-send" id="aiSendBtn" onclick="sendAI()" aria-label="Send">
+          <i class="ti ti-send" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// ── DATA ─────────────────────────────────────────────────────────────────────
+const TEAM = [
+  {name:'Julian Toogood',  loc:'UK',    initials:'JT', color:'#1657a8', bg:'#ddeafa'},
+  {name:'Millicent Oketch',loc:'Kenya', initials:'MO', color:'#0d6047', bg:'#c3e9d9'},
+  {name:'Ahmad Juma',      loc:'Kenya', initials:'AJ', color:'#0d6047', bg:'#9fdfc9'},
+  {name:'June Kiarie',     loc:'Kenya', initials:'JK', color:'#085041', bg:'#5dcaa5'},
+];
+const BH_KE = {1:[1],3:[20],4:[3,6],5:[1,27],6:[1],10:[20],12:[12,25,26]};
+const BH_UK = {1:[1],4:[3,6],5:[4,25],8:[31],12:[25,28]};
+const LEAVE = {'Millicent Oketch':{5:[28,29]}};
+const BH_NAMES = [
+  {date:'2026-01-01',name:"New Year's Day",loc:'both'},
+  {date:'2026-03-20',name:'Eid al-Fitr',loc:'ke'},
+  {date:'2026-04-03',name:'Good Friday',loc:'both'},
+  {date:'2026-04-06',name:'Easter Monday',loc:'both'},
+  {date:'2026-05-01',name:'Labour Day',loc:'ke'},
+  {date:'2026-05-04',name:'Early May Bank Holiday',loc:'uk'},
+  {date:'2026-05-25',name:'Spring Bank Holiday',loc:'uk'},
+  {date:'2026-05-27',name:'Eid al-Adha',loc:'ke'},
+  {date:'2026-06-01',name:'Madaraka Day',loc:'ke'},
+  {date:'2026-08-31',name:'Summer Bank Holiday',loc:'uk'},
+  {date:'2026-10-10',name:'Mazingira Day',loc:'ke'},
+  {date:'2026-10-20',name:'Mashujaa Day',loc:'ke'},
+  {date:'2026-12-12',name:'Jamhuri Day',loc:'ke'},
+  {date:'2026-12-25',name:'Christmas Day',loc:'both'},
+  {date:'2026-12-26',name:'Boxing Day',loc:'ke'},
+  {date:'2026-12-28',name:"Boxing Day (obs.)",loc:'uk'},
+];
+const MONTHS    = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTHS_F  = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DAYS_S    = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const WORK_DAYS = {1:22,2:20,3:22,4:22,5:21,6:22,7:23,8:21,9:22,10:22,11:21,12:23};
+
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+const dim = m => new Date(2026,m,0).getDate();
+const dow = (m,d) => new Date(2026,m-1,d).getDay();
+const isWE = (m,d) => {const w=dow(m,d);return w===0||w===6;};
+const pLeave = p => Object.values(LEAVE[p.name]||{}).reduce((a,b)=>a+b.length,0);
+const pBH    = p => MONTHS.map((_,i)=>i+1).reduce((a,mn)=>a+((p.loc==='Kenya'?BH_KE[mn]:BH_UK[mn])||[]).length,0);
+const pAvail = p => Object.values(WORK_DAYS).reduce((a,b)=>a+b,0) - pBH(p) - pLeave(p);
+const isLv   = (nm,mn,d) => ((LEAVE[nm]||{})[mn]||[]).includes(d);
+
+let filter='all';
+const ft = () => filter==='ke'?TEAM.filter(t=>t.loc==='Kenya'):filter==='uk'?TEAM.filter(t=>t.loc==='UK'):TEAM;
+
+function setFilter(f){
+  filter=f;
+  ['all','ke','uk'].forEach(x=>document.getElementById('f-'+x).classList.toggle('active',x===f));
+  renderAll();
+}
+
+// ── TABS ──────────────────────────────────────────────────────────────────────
+const TAB_NAMES = ['overview','heatmap','calendar','holidays','askai'];
+function switchTab(name){
+  TAB_NAMES.forEach(t=>{
+    document.getElementById('panel-'+t).classList.toggle('active',t===name);
+    const btn=document.getElementById('tb-'+t);
+    btn.classList.toggle('active',t===name);
+    btn.setAttribute('aria-selected',t===name);
+  });
+  document.getElementById('filterBar').style.display = name==='askai' ? 'none' : 'flex';
+  if(name==='calendar') renderMonthCal();
+}
+
+// ── METRICS ──────────────────────────────────────────────────────────────────
+function renderMetrics(){
+  const team=ft();
+  const today=new Date();today.setHours(0,0,0,0);
+  const upcoming=BH_NAMES.filter(bh=>{
+    const d=new Date(bh.date);
+    const ok=filter==='all'||(filter==='ke'&&(bh.loc==='ke'||bh.loc==='both'))||(filter==='uk'&&(bh.loc==='uk'||bh.loc==='both'));
+    return d>=today&&ok;
+  }).length;
+  const totalLv=team.reduce((a,p)=>a+pLeave(p),0);
+  const avgBH=team.length?Math.round(team.reduce((a,p)=>a+pBH(p),0)/team.length):0;
+  const avgAv=team.length?Math.round(team.reduce((a,p)=>a+pAvail(p),0)/team.length):0;
+  document.getElementById('metrics').innerHTML=`
+    <div class="mc"><div class="mc-label"><i class="ti ti-users"></i>Team</div><div class="mc-val">${team.length}</div><div class="mc-sub">${team.filter(t=>t.loc==='Kenya').length} Kenya · ${team.filter(t=>t.loc==='UK').length} UK</div></div>
+    <div class="mc"><div class="mc-label"><i class="ti ti-plane-departure"></i>Leave taken</div><div class="mc-val">${totalLv}</div><div class="mc-sub">days in 2026</div></div>
+    <div class="mc"><div class="mc-label"><i class="ti ti-building-bank"></i>Avg holidays</div><div class="mc-val">${avgBH}</div><div class="mc-sub">per person</div></div>
+    <div class="mc"><div class="mc-label"><i class="ti ti-calendar-check"></i>Avg available</div><div class="mc-val">${avgAv}</div><div class="mc-sub">working days</div></div>
+    <div class="mc"><div class="mc-label"><i class="ti ti-calendar-event"></i>Upcoming BH</div><div class="mc-val">${upcoming}</div><div class="mc-sub">remaining in 2026</div></div>`;
+}
+
+// ── CHARTS ────────────────────────────────────────────────────────────────────
+let lchart,bchart;
+function renderCharts(){
+  if(lchart)lchart.destroy();
+  if(bchart)bchart.destroy();
+  const team=ft();
+  const dk=window.matchMedia('(prefers-color-scheme:dark)').matches;
+  const gc=dk?'rgba(255,255,255,.05)':'rgba(0,0,0,.05)';
+  const tc=dk?'#68686a':'#888';
+  const secBg=dk?'#2b2b29':'#eef0f2';
+
+  lchart=new Chart(document.getElementById('leaveChart'),{
+    type:'bar',
+    data:{labels:team.map(p=>p.name.split(' ')[0]),datasets:[
+      {label:'Leave taken',data:team.map(p=>pLeave(p)),backgroundColor:'#2f7de0',borderRadius:3,categoryPercentage:.5,barPercentage:.9},
+      {label:'Working days',data:team.map(p=>pAvail(p)),backgroundColor:secBg,borderRadius:3,categoryPercentage:.5,barPercentage:.9},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.raw} days`}}},
+      scales:{x:{stacked:true,grid:{display:false},ticks:{color:tc,font:{size:11}}},y:{stacked:true,grid:{color:gc},ticks:{color:tc,font:{size:11},callback:v=>v+'d'}}}}
+  });
+
+  const bhpm=MONTHS.map((_,i)=>{const mn=i+1;return{ke:(BH_KE[mn]||[]).length,uk:(BH_UK[mn]||[]).length};});
+  bchart=new Chart(document.getElementById('bhChart'),{
+    type:'line',
+    data:{labels:MONTHS,datasets:[
+      {label:'Kenya',data:bhpm.map(x=>x.ke),hidden:filter==='uk',borderColor:'#18976c',backgroundColor:'rgba(24,151,108,.08)',fill:true,tension:.4,pointRadius:4,pointHoverRadius:6},
+      {label:'UK',data:bhpm.map(x=>x.uk),hidden:filter==='ke',borderColor:'#1657a8',backgroundColor:'transparent',borderDash:[4,3],tension:.4,pointRadius:4,pointHoverRadius:6,pointStyle:'triangle'},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:10}}},y:{min:0,max:4,grid:{color:gc},ticks:{stepSize:1,color:tc,font:{size:11}}}}}
+  });
+}
+
+// ── HEATMAP ───────────────────────────────────────────────────────────────────
+function renderHeatmap(){
+  const team=ft();
+  document.getElementById('hmLabels').innerHTML=MONTHS.map(m=>`<span class="hm-mlbl">${m}</span>`).join('');
+  const hm=document.getElementById('heatmap');hm.innerHTML='';
+  const tt=document.getElementById('tt');
+  team.forEach(person=>{
+    const row=document.createElement('div');row.className='hm-row';
+    row.innerHTML=`<div class="hm-person"><div class="avatar" style="background:${person.bg};color:${person.color}">${person.initials}</div><div><div class="pname">${person.name.split(' ')[0]}</div><div class="ploc">${person.loc}</div></div></div>`;
+    const cells=document.createElement('div');cells.className='hm-cells';
+    MONTHS.forEach((m,mi)=>{
+      const mn=mi+1,nd=dim(mn);
+      let lv=0,bhKe=0,bhUk=0;
+      for(let d=1;d<=nd;d++){
+        if(isWE(mn,d))continue;
+        if(isLv(person.name,mn,d)){lv++;continue;}
+        if((BH_KE[mn]||[]).includes(d))bhKe++;
+        if((BH_UK[mn]||[]).includes(d))bhUk++;
+      }
+      const bh=person.loc==='Kenya'?bhKe:bhUk;
+      const av=WORK_DAYS[mn]-bh-lv;
+      let bg='var(--bg2)',color='var(--text3)',label='';
+      if(lv){bg='#2f7de0';color='#fff';}
+      else if(bhKe&&bhUk){bg='#7c3aed';color='#fff';}
+      else if(person.loc==='Kenya'&&bhKe){bg='#18976c';color='#fff';}
+      else if(person.loc==='UK'&&bhUk){bg='#d97706';color='#fff';}
+      label=av;
+      if(bg==='var(--bg2)'){color='var(--text3)';}
+      const cell=document.createElement('div');cell.className='hm-cell';
+      cell.style.background=bg;cell.style.color=color;
+      if(label)cell.textContent=label;
+      cell.addEventListener('mouseenter',e=>{
+        tt.style.display='block';
+        tt.innerHTML=`<strong>${person.name.split(' ')[0]} · ${MONTHS_F[mi]}</strong>${lv?`<div class="tip-row"><span>✈ Leave</span><span>${lv} day${lv!==1?'s':''}</span></div>`:''} ${bh?`<div class="tip-row"><span>🏛 Holidays</span><span>${bh}</span></div>`:''}<div class="tip-row"><span>📅 Available</span><span>${av} day${av!==1?'s':''}</span></div>`;
+      });
+      cell.addEventListener('mousemove',e=>{tt.style.left=Math.min(e.clientX+14,window.innerWidth-230)+'px';tt.style.top=(e.clientY-10)+'px';});
+      cell.addEventListener('mouseleave',()=>tt.style.display='none');
+      cells.appendChild(cell);
+    });
+    row.appendChild(cells);hm.appendChild(row);
+  });
+}
+
+// ── MONTH CALENDAR ────────────────────────────────────────────────────────────
+function renderMonthCal(){
+  const mi=parseInt(document.getElementById('monthSel').value);
+  const mn=mi+1,nd=dim(mn),fd=dow(mn,1);
+  const today=new Date();
+  const isCur=today.getFullYear()===2026&&today.getMonth()===mi;
+  const team=ft();
+  let html=`<table class="mini-cal" role="grid" aria-label="${MONTHS_F[mi]} 2026"><thead><tr>`;
+  ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d=>html+=`<th scope="col">${d}</th>`);
+  html+=`</tr></thead><tbody><tr>`;
+  for(let i=0;i<fd;i++)html+=`<td></td>`;
+  for(let day=1;day<=nd;day++){
+    const dw=dow(mn,day);
+    if(dw===0&&day!==1)html+=`</tr><tr>`;
+    const we=dw===0||dw===6;
+    const tod=isCur&&today.getDate()===day;
+    let cls='cday'+(we?' we':'');
+    if(tod)cls+=' tod';
+    let tip='';
+    if(!we){
+      const lvp=team.filter(p=>isLv(p.name,mn,day));
+      const keH=(BH_KE[mn]||[]).includes(day);
+      const ukH=(BH_UK[mn]||[]).includes(day);
+      const hn=BH_NAMES.find(b=>{const d=new Date(b.date);return d.getMonth()===mi&&d.getDate()===day;})?.name||'';
+      if(lvp.length){cls+=' lv';tip=`Leave: ${lvp.map(p=>p.name.split(' ')[0]).join(', ')}`;}
+      else if(keH&&ukH){cls+=' bh-both';tip=hn+' (KE+UK)';}
+      else if(keH){cls+=' bh-ke';tip=hn;}
+      else if(ukH){cls+=' bh-uk';tip=hn;}
+    }
+    html+=`<td><span class="${cls}" title="${tip}">${day}</span></td>`;
+    if(dw===6&&day!==nd)html+=`</tr><tr>`;
+  }
+  const ldw=dow(mn,nd);
+  if(ldw!==6)for(let i=ldw+1;i<=6;i++)html+=`<td></td>`;
+  html+=`</tr></tbody></table>`;
+  document.getElementById('miniCal').innerHTML=html;
+
+  // Right panel detail
+  const bhThis=BH_NAMES.filter(b=>{const d=new Date(b.date);return d.getMonth()===mi;});
+  const lvThis=team.flatMap(p=>((LEAVE[p.name]||{})[mn]||[]).map(d=>({person:p,day:d})));
+  let detail='';
+  if(bhThis.length){
+    detail+=`<div style="margin-bottom:10px"><div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Public holidays</div>`;
+    detail+=bhThis.map(bh=>{
+      const d=new Date(bh.date);
+      const badge=bh.loc==='both'?`<span class="badge b-both">KE+UK</span>`:bh.loc==='ke'?`<span class="badge b-ke">Kenya</span>`:`<span class="badge b-uk">UK</span>`;
+      return `<div class="bh-item"><span class="bh-date">${DAYS_S[d.getDay()]} ${d.getDate()}</span><span class="bh-name">${bh.name}</span>${badge}</div>`;
+    }).join('');
+    detail+=`</div>`;
+  }
+  if(lvThis.length){
+    detail+=`<div><div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Leave recorded</div>`;
+    const byPerson={};
+    lvThis.forEach(({person,day})=>{if(!byPerson[person.name]){byPerson[person.name]={person,days:[]}}byPerson[person.name].days.push(day);});
+    detail+=Object.values(byPerson).map(({person,days})=>`<div class="bh-item"><span class="bh-date" style="display:flex;align-items:center;gap:6px"><div class="avatar" style="width:20px;height:20px;font-size:9px;background:${person.bg};color:${person.color}">${person.initials}</div>${person.name.split(' ')[0]}</span><span class="bh-name">${days.length} day${days.length!==1?'s':''} (${days.map(d=>d).sort((a,b)=>a-b).join(', ')} ${MONTHS[mn-1]})</span></div>`).join('');
+    detail+=`</div>`;
+  }
+  if(!bhThis.length&&!lvThis.length)detail=`<div class="empty"><i class="ti ti-circle-check" aria-hidden="true"></i>No holidays or leave this month${filter!=='all'?' for this filter':''}</div>`;
+  document.getElementById('calDetail').innerHTML=detail;
+}
+
+// ── UPCOMING HOLIDAYS ─────────────────────────────────────────────────────────
+function renderHolidays(){
+  const today=new Date();today.setHours(0,0,0,0);
+  const list=BH_NAMES.filter(bh=>{
+    const d=new Date(bh.date);
+    const ok=filter==='all'||(filter==='ke'&&(bh.loc==='ke'||bh.loc==='both'))||(filter==='uk'&&(bh.loc==='uk'||bh.loc==='both'));
+    return d>=today&&ok;
+  });
+  document.getElementById('bhCount').textContent=`(${list.length} remaining)`;
+  if(!list.length){document.getElementById('upcomingBH').innerHTML=`<div class="empty"><i class="ti ti-calendar-off"></i>No upcoming holidays for this filter</div>`;return;}
+  document.getElementById('upcomingBH').innerHTML=list.map(bh=>{
+    const d=new Date(bh.date);
+    const diff=Math.round((d-today)/864e5);
+    const when=diff===0?`<span style="color:var(--teal);font-size:11px;font-weight:500">today</span>`:diff===1?`<span class="days-away">tomorrow</span>`:`<span class="days-away">in ${diff}d</span>`;
+    const badge=bh.loc==='both'?`<span class="badge b-both">KE+UK</span>`:bh.loc==='ke'?`<span class="badge b-ke">Kenya</span>`:`<span class="badge b-uk">UK</span>`;
+    return `<div class="bh-item"><span class="bh-date">${DAYS_S[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]} ${when}</span><span class="bh-name">${bh.name}</span>${badge}</div>`;
+  }).join('');
+
+  // Avail bars
+  const team=ft();
+  const maxAv=Math.max(...team.map(p=>pAvail(p)));
+  const colors=['#1657a8','#18976c','#0d6047','#085041'];
+  document.getElementById('availBars').innerHTML=team.map((p,i)=>{
+    const av=pAvail(p),bh=pBH(p),lv=pLeave(p);
+    const total=Object.values(WORK_DAYS).reduce((a,b)=>a+b,0);
+    const pct=Math.round(av/total*100);
+    return `<div class="avail-row" title="${p.name}: ${av} available, ${bh} public holidays, ${lv} leave days">
+      <div class="avail-lbl">${p.name.split(' ')[0]}</div>
+      <div class="avail-track"><div class="avail-fill" style="width:${pct}%;background:${colors[i%colors.length]}"></div></div>
+      <div class="avail-val" style="color:${colors[i%colors.length]}">${av}d</div>
+    </div>`;
+  }).join('');
+}
+
+// ── ASK AI ────────────────────────────────────────────────────────────────────
+const SUGGESTED = [
+  "Who has the most leave days remaining?",
+  "When is the next bank holiday for Kenya?",
+  "How many working days does Julian have in Q3?",
+  "Which months have holidays for both locations?",
+  "How much leave has Millicent taken?",
+];
+
+function buildDataContext(){
+  const lines=[];
+  lines.push("You are a helpful assistant for a team leave tracker. Here is the complete 2026 data:\n");
+  lines.push("TEAM MEMBERS:");
+  TEAM.forEach(p=>lines.push(`- ${p.name} (${p.loc})`));
+  lines.push("\nBANK HOLIDAYS 2026:");
+  BH_NAMES.forEach(bh=>{
+    const d=new Date(bh.date);
+    const loc=bh.loc==='both'?'Kenya + UK':bh.loc==='ke'?'Kenya':'UK';
+    lines.push(`- ${bh.name}: ${DAYS_S[d.getDay()]} ${d.getDate()} ${MONTHS_F[d.getMonth()]} (${loc})`);
+  });
+  lines.push("\nLEAVE TAKEN:");
+  let anyLeave=false;
+  TEAM.forEach(p=>{
+    const lv=LEAVE[p.name]||{};
+    Object.entries(lv).forEach(([mn,days])=>{
+      anyLeave=true;
+      lines.push(`- ${p.name}: ${days.length} day(s) in ${MONTHS_F[parseInt(mn)-1]} (days: ${days.join(', ')})`);
+    });
+  });
+  if(!anyLeave)lines.push("- Only Millicent Oketch has leave recorded: 2 days on 28–29 May 2026.");
+  lines.push("\nWORKING DAYS PER MONTH (Mon–Fri, before deductions):");
+  MONTHS.forEach((m,i)=>lines.push(`- ${m}: ${WORK_DAYS[i+1]} days`));
+  lines.push("\nAVAILABLE WORKING DAYS PER PERSON (after public holidays and leave):");
+  TEAM.forEach(p=>lines.push(`- ${p.name} (${p.loc}): ${pAvail(p)} days (${pBH(p)} public holidays, ${pLeave(p)} leave days)`));
+  lines.push("\nAnswer questions concisely and accurately. Use the data above. If asked about Q1/Q2/Q3/Q4: Q1=Jan-Mar, Q2=Apr-Jun, Q3=Jul-Sep, Q4=Oct-Dec.");
+  return lines.join('\n');
+}
+
+let aiHistory=[];
+let aiTyping=false;
+
+function renderChips(){
+  document.getElementById('chips').innerHTML=SUGGESTED.map((q,i)=>
+    `<button class="chip" onclick="useChip(${i})">${q}</button>`
+  ).join('');
+}
+
+function useChip(i){
+  document.getElementById('aiInput').value=SUGGESTED[i];
+  sendAI();
+}
+
+function appendMsg(role,html){
+  const msgs=document.getElementById('aiMsgs');
+  const div=document.createElement('div');
+  div.className=`msg ${role}`;
+  const av=document.createElement('div');
+  av.className=`msg-avatar ${role==='ai'?'ai-av':'user-av'}`;
+  av.textContent=role==='ai'?'AI':'You';
+  const bubble=document.createElement('div');
+  bubble.className='msg-bubble';
+  bubble.innerHTML=html;
+  if(role==='ai'){div.appendChild(av);div.appendChild(bubble);}
+  else{div.appendChild(bubble);div.appendChild(av);}
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+  return div;
+}
+
+function appendTyping(){
+  const msgs=document.getElementById('aiMsgs');
+  const div=document.createElement('div');
+  div.className='msg ai';div.id='typing-indicator';
+  div.innerHTML=`<div class="msg-avatar ai-av">AI</div><div class="msg-bubble"><div class="typing"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function removeTyping(){
+  const el=document.getElementById('typing-indicator');
+  if(el)el.remove();
+}
+
+function mdToHtml(text){
+  return text
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g,'<em>$1</em>')
+    .replace(/^- (.+)$/gm,'<li>$1</li>')
+    .replace(/(<li>.*<\/li>)/s,'<ul>$1</ul>')
+    .split('\n\n').map(p=>p.trim()?`<p>${p.replace(/\n/g,'<br>')}</p>`:'').join('');
+}
+
+async function sendAI(){
+  if(aiTyping)return;
+  const input=document.getElementById('aiInput');
+  const q=input.value.trim();
+  if(!q)return;
+  input.value='';
+  document.getElementById('aiSendBtn').disabled=true;
+  aiTyping=true;
+
+  appendMsg('user',q);
+  aiHistory.push({role:'user',content:q});
+  appendTyping();
+
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:buildDataContext(),
+        messages:aiHistory.map(m=>({role:m.role,content:m.content}))
+      })
+    });
+    const data=await resp.json();
+    removeTyping();
+    if(data.content){
+      const answer=data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+      appendMsg('ai',mdToHtml(answer));
+      aiHistory.push({role:'assistant',content:answer});
+    } else {
+      const errMsg=(data.error&&data.error.message)||'No response — the AI may not be available in this context.';
+      appendMsg('ai',`<p>${errMsg}</p>`);
+      aiHistory.pop();
+    }
+  }catch(e){
+    removeTyping();
+    appendMsg('ai','<p>Unable to reach the AI. This feature works when the dashboard is opened inside Claude.ai.</p>');
+    aiHistory.pop();
+  }
+  aiTyping=false;
+  document.getElementById('aiSendBtn').disabled=false;
+  input.focus();
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+function renderAll(){
+  renderMetrics();
+  renderCharts();
+  renderHeatmap();
+  renderHolidays();
+  if(document.getElementById('panel-calendar').classList.contains('active'))renderMonthCal();
+}
+
+const now=new Date();
+const sel=document.getElementById('monthSel');
+sel.value=now.getFullYear()===2026?now.getMonth():0;
+document.getElementById('genDate').textContent=now.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+
+renderChips();
+renderAll();
+
+// Welcome AI message
+appendMsg('ai','<p>Hi! I can answer questions about the team\'s leave, bank holidays, and working day availability across Kenya and UK. What would you like to know?</p>');
+</script>
+</body>
+</html>
